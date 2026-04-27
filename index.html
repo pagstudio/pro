@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PAG Studio — Monteur UGC & Short-form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+      animation: gridDrift 30s linear infinite;
+    }
+    @keyframes gridDrift {
+      0%   { background-position: 0 0; }
+      100% { background-position: 48px 48px; }
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 { width: 550px; height: 550px; background: radial-gradient(circle, #a855f7 0%, transparent 70%); opacity: 0.22; top: -150px; left: -150px; animation: orbit1 18s ease-in-out infinite alternate; }
+    .orb-2 { width: 450px; height: 450px; background: radial-gradient(circle, #ec4899 0%, transparent 70%); opacity: 0.18; top: 30%; right: -120px; animation: orbit2 22s ease-in-out infinite alternate; }
+    .orb-3 { width: 380px; height: 380px; background: radial-gradient(circle, #6366f1 0%, transparent 70%); opacity: 0.16; bottom: 5%; left: 10%; animation: orbit3 26s ease-in-out infinite alternate; }
+    .orb-4 { width: 300px; height: 300px; background: radial-gradient(circle, #f97316 0%, transparent 70%); opacity: 0.10; top: 60%; left: 45%; animation: orbit4 20s ease-in-out infinite alternate; }
+    @keyframes orbit1 { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(60px,80px) scale(1.15); } 100% { transform: translate(20px,40px) scale(0.95); } }
+    @keyframes orbit2 { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(-80px,60px) scale(1.2); } 100% { transform: translate(-30px,-40px) scale(1.05); } }
+    @keyframes orbit3 { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(70px,-50px) scale(1.1); } 100% { transform: translate(40px,30px) scale(0.9); } }
+    @keyframes orbit4 { 0% { transform: translate(0,0) scale(1); } 50% { transform: translate(-60px,-70px) scale(1.3); } 100% { transform: translate(30px,60px) scale(0.85); } }
+
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle {
+      position: absolute;
+      width: 2px; height: 2px;
+      border-radius: 50%;
+      opacity: 0;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; }
+      8%   { opacity: 0.5; transform: translateY(-8vh) translateX(calc(var(--drift,20px) * 0.1)) scale(1); }
+      50%  { opacity: 0.4; transform: translateY(-50vh) translateX(calc(var(--drift,20px) * 0.6)); }
+      90%  { opacity: 0.15; }
+      100% { transform: translateY(-105vh) translateX(var(--drift,20px)) scale(0.6); opacity: 0; }
+    }
+
+    .content { position: relative; z-index: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 100px;
+      font-weight: 700 !important;
+      -webkit-text-fill-color: #fff !important;
+    }
+
+    /* ── HERO ── */
+    .hero { padding: 100px 40px 80px; text-align: center; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(168,85,247,0.15);
+      border: 1px solid rgba(168,85,247,0.4);
+      color: #d8b4fe;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 100px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: #a855f7;
+      border-radius: 50%;
+      animation: pulse 1.5s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      
+    }
+    .plain-text {
+      display: block;
+      color: #ffffff;
+      -webkit-text-fill-color: #ffffff;
+      text-shadow: 0 0 40px rgba(255,255,255,0.15);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block;
+    }
+    .hero-sub {
+      font-size: 17px;
+      color: rgba(255,255,255,0.82);
+      max-width: 540px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+      font-weight: 400;
+      
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: #fff;
+      border: none;
+      padding: 15px 36px;
+      border-radius: 100px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(168,85,247,0.45), 0 0 0 1px rgba(168,85,247,0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 36px rgba(168,85,247,0.6), 0 0 0 1px rgba(168,85,247,0.5);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.55);
+      padding: 15px 36px;
+      border-radius: 100px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      backdrop-filter: blur(6px);
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.85); transform: translateY(-2px); }
+    .btn-secondary:active { transform: translateY(0); }
+
+    /* ── STATS ── */
+    .stats-bar {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-left: -48px;
+      margin-right: -48px;
+    }
+    /* ── TICKER ── */
+    .stats-inner { max-width: 1100px; margin: 0 auto; padding: 30px 48px; display: flex; justify-content: center; }
+    .stat-item { text-align: center; padding: 0 40px; border-right: 1px solid rgba(255,255,255,0.1); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-size: 28px; font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat-label { font-size: 12px; color: rgba(255,255,255,0.75); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px; font-weight: 600; }
+
+    /* ── TICKER ── */
+    .ticker-wrapper {
+      overflow: hidden;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 12px 0;
+      background: rgba(168,85,247,0.04);
+      margin-left: -48px;
+      margin-right: -48px;
+    }
+    .ticker-track {
+      display: flex;
+      gap: 48px;
+      animation: ticker 20s linear infinite;
+      white-space: nowrap;
+      width: max-content;
+    }
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.65);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .ticker-dot {
+      width: 4px; height: 4px;
+      background: #a855f7;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    @keyframes ticker {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── SECTIONS ── */
+    .section-header { padding: 64px 0 36px; }
+    .section-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #c084fc;
+      margin-bottom: 10px;
+    }
+    .section-header h2 {
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      color: #fff;
+    }
+    .section-header p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 10px;
+      line-height: 1.6;
+      max-width: 480px;
+      font-weight: 500;
+    }
+
+    /* ── PORTFOLIO ── */
+    .portfolio-grid {
+      padding-bottom: 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 780px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .video-featured {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .video-featured:hover { border-color: rgba(168,85,247,0.45); transform: translateY(-3px); }
+    .video-featured:hover .overlay  { opacity: 1; }
+    .video-featured:hover .play-btn { transform: scale(1.1); }
+
+    .featured-label {
+      position: absolute;
+      top: 12px; left: 12px;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      z-index: 2;
+    }
+
+    .videos-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .video-card {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #111;
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      aspect-ratio: 9 / 16;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .video-card:hover { border-color: rgba(168,85,247,0.45); transform: translateY(-4px); }
+    .video-card:hover .overlay  { opacity: 1; }
+    .video-card:hover .play-btn { transform: scale(1.1); }
+
+    .thumb {
+      position: absolute;
+      inset: 0;
+    }
+    .thumb-horiz { background: linear-gradient(135deg, #0f0a1e 0%, #1e0a3d 40%, #3b1a6e 70%, #6b21a8 100%); }
+    .thumb-1     { background: linear-gradient(160deg, #1a0533 0%, #3d1a6e 40%, #6b21a8 100%); }
+    .thumb-2     { background: linear-gradient(160deg, #0f1a1f 0%, #0e4d5c 40%, #0891b2 100%); }
+    .thumb-3     { background: linear-gradient(160deg, #1a0527 0%, #701a75 40%, #a21caf 100%); }
+
+    .thumb-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      opacity: 0.4;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      opacity: 0;
+      transition: opacity 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+    }
+    .play-btn {
+      width: 40px; height: 40px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .play-icon {
+      width: 0; height: 0;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 12px solid #000;
+      margin-left: 2px;
+    }
+
+    .video-info {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 36px 12px 12px;
+      background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%);
+      z-index: 2;
+    }
+    .video-tag   { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #d8b4fe; margin-bottom: 3px; }
+    .video-title { font-size: 11px; font-weight: 700; line-height: 1.3; color: #fff; }
+    .video-meta  { font-size: 10px; color: rgba(255,255,255,0.65); margin-top: 3px; font-weight: 500; }
+
+    .video-info-horiz {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 48px 18px 16px;
+      background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, transparent 100%);
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .video-info-horiz .left .video-tag   { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #d8b4fe; margin-bottom: 4px; }
+    .video-info-horiz .left .video-title { font-size: 15px; font-weight: 800; color: #fff; }
+    .video-info-horiz .left .video-meta  { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 3px; font-weight: 500; }
+    .coming-badge {
+      display: inline-block;
+      background: rgba(168,85,247,0.2);
+      border: 1px solid rgba(168,85,247,0.5);
+      color: #d8b4fe;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── SERVICES ── */
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-bottom: 64px; }
+    .service-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #a855f7, #ec4899);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+      transform-origin: left;
+    }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(168,85,247,0.3); }
+    .service-icon  { font-size: 24px; margin-bottom: 14px; display: block; }
+    .service-title { font-size: 15px; font-weight: 800; margin-bottom: 8px; color: #fff; }
+    .service-desc  { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.65; font-weight: 500; }
+
+    /* ── ABOUT ── */
+    .about-section {
+      padding-bottom: 64px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .about-text h2 { font-size: 30px; font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; line-height: 1.2; color: #fff; }
+    .about-text p  { font-size: 14px; color: rgba(255,255,255,0.78); line-height: 1.8; margin-bottom: 12px; font-weight: 500; }
+    .tools-list    { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .tool-tag {
+      background: rgba(168,85,247,0.12);
+      border: 1px solid rgba(168,85,247,0.35);
+      color: #d8b4fe;
+      font-size: 12px; font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+    }
+    .about-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .about-stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    .about-stat-num {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+    .about-stat-label { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 4px; line-height: 1.4; font-weight: 600; }
+
+    /* ── CONTACT ── */
+    .contact-section { padding-bottom: 80px; text-align: center; }
+    .contact-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 56px 40px;
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(168,85,247,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .contact-card h2 { font-size: 32px; font-weight: 900; letter-spacing: -1px; margin-bottom: 12px; color: #fff; }
+    .contact-card p  { font-size: 15px; color: rgba(255,255,255,0.78); margin-bottom: 32px; line-height: 1.7; font-weight: 500; }
+    .contact-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.18);
+      color: rgba(255,255,255,0.92);
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 100px;
+      font-size: 13px; font-weight: 700;
+      transition: all 0.2s;
+    }
+    .contact-link:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.35); color: #fff; }
+
+    /* ── FOOTER ── */
+    footer { border-top: 1px solid rgba(255,255,255,0.08); }
+    .footer-inner { max-width: 1100px; margin: 0 auto; padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; }
+    footer p { font-size: 12px; color: rgba(255,255,255,0.55); font-weight: 500; }
+
+    
+    /* ── SCANLINE ── */
+    .scanline {
+      position: fixed;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(168,85,247,0) 15%, rgba(168,85,247,0.4) 40%, rgba(236,72,153,0.6) 50%, rgba(168,85,247,0.4) 60%, rgba(168,85,247,0) 85%, transparent 100%);
+      z-index: 2;
+      pointer-events: none;
+      animation: scanMove 8s cubic-bezier(0.25,0.1,0.25,1) infinite;
+      box-shadow: 0 0 20px 3px rgba(168,85,247,0.2), 0 0 60px 8px rgba(236,72,153,0.08);
+    }
+    @keyframes scanMove {
+      0%   { top: -2px; opacity: 0; }
+      2%   { opacity: 1; }
+      50%  { opacity: 0.6; }
+      98%  { opacity: 0.3; }
+      100% { top: 100vh; opacity: 0; }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ── HERO STAGGER ── */
+    .hero-badge { opacity: 0; animation: heroIn 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s forwards; }
+    .hero h1 { opacity: 0; animation: heroIn 0.8s cubic-bezier(0.16,1,0.3,1) 0.35s forwards; }
+    .hero-sub { opacity: 0; animation: heroIn 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s forwards; }
+    .hero-actions { opacity: 0; animation: heroIn 0.8s cubic-bezier(0.16,1,0.3,1) 0.65s forwards; }
+    @keyframes heroIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ── LOGO SHIMMER ── */
+    .nav-logo {
+      background-size: 200% 100%;
+      animation: shimmer 4s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+
+    /* ── HOVER LIFT sur cards ── */
+    .service-card, .about-stat-card, .contact-link {
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .video-featured, .video-card {
+      transition: border-color 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.4s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .video-featured:hover, .video-card:hover {
+      box-shadow: 0 8px 32px rgba(168,85,247,0.2);
+    }
+    .service-card:hover {
+      transform: translateY(-4px);
+    }
+    .about-stat-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(168,85,247,0.3);
+    }
+
+    /* ── GRADIENT TEXT BREATHING ── */
+    .gradient-text {
+      background-size: 200% 100%;
+      animation: gradientBreath 6s ease-in-out infinite;
+    }
+    @keyframes gradientBreath {
+      0%, 100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+
+    /* ── LAYOUT avec marges ── */
+    .page-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 48px;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0; }
+      .nav-inner { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .page-inner { padding: 0 20px; }
+      .stats-bar { margin-left: -20px; margin-right: -20px; }
+      .ticker-wrapper { margin-left: -20px; margin-right: -20px; }
+      .hero { padding: 64px 0 48px; }
+      .stats-bar { flex-wrap: wrap; gap: 0; }
+      .stats-inner { padding: 24px 20px; flex-wrap: wrap; gap: 16px; }
+      .stat-item { border-right: none; padding: 0 16px; }
+      .section-header { padding: 48px 0 28px; }
+      .portfolio-grid { padding-bottom: 48px; max-width: 100%; }
+      .videos-row { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr; padding-bottom: 48px; }
+      .about-section { grid-template-columns: 1fr; padding-bottom: 48px; }
+      .contact-section { padding-bottom: 64px; }
+      .contact-card { padding: 40px 20px; }
+      .footer-inner { padding: 16px 20px; flex-direction: column; gap: 12px; text-align: center; }
+      .footer-inner > div { flex-direction: column; gap: 8px; }
+    }
+
+
+    /* ── VIDÉOS NATIVES MP4 ── */
+    .video-wrap video {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border: none;
+    }
+    .video-wrap.vert video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* ── VIDÉOS YOUTUBE ── */
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+    .video-wrap iframe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: none;
+    }
+    /* Pour les verticales, on agrandi l'iframe pour couvrir */
+    .video-wrap.vert iframe {
+      width: 177.8%;
+      height: 100%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .sound-btn {
+      position: absolute;
+      bottom: 52px;
+      right: 12px;
+      z-index: 10;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+      backdrop-filter: blur(6px);
+      pointer-events: all;
+    }
+    .sound-btn:hover {
+      background: rgba(168,85,247,0.5);
+      border-color: rgba(168,85,247,0.7);
+      transform: scale(1.1);
+    }
+    .sound-btn svg { width: 14px; height: 14px; fill: #fff; }
+
+    .calendly-wrap {
+      margin: 32px 0 24px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .contact-divider {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* ── PLAY FALLBACK ── */
+    .play-fallback {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      cursor: pointer;
+      background: rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .play-fallback.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .play-fallback .play-circle {
+      width: 56px;
+      height: 56px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+    .play-fallback:hover .play-circle {
+      transform: scale(1.1);
+    }
+    .play-fallback .play-triangle {
+      width: 0; height: 0;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-left: 16px solid #000;
+      margin-left: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="orb orb-4"></div>
+  <div class="scanline"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="content">
+
+    <!-- NAV -->
+    <nav>
+      <div class="nav-inner">
+        <div class="nav-logo">PAG Studio</div>
+        <ul class="nav-links">
+          <li><a href="#projets">Projets</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#about">À propos</a></li>
+          <li><a class="nav-cta" href="https://calendly.com/pagstudio-contact/30min" target="_blank">Prendre RDV</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="page-inner">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-badge">Disponible pour missions</div>
+      <h1>
+        <span class="plain-text">Monteur &amp; éditeur vidéo</span>
+        <span class="gradient-text">Tous formats, toutes plateformes</span>
+      </h1>
+      <p class="hero-sub">Je transforme vos rushs en contenus percutants — vidéos courtes, publicités, vlogs, teasers ou capsules longues, optimisés pour chaque plateforme et chaque objectif.</p>
+      <div class="hero-actions">
+        <a href="#projets"><button class="btn-primary">Voir mes projets</button></a>
+        <a href="https://calendly.com/pagstudio-contact/30min" target="_blank"><button class="btn-secondary">Prendre RDV</button></a>
+      </div>
+    </section>
+    <div class="stats-bar reveal">
+      <div class="stats-inner">
+      <div class="stat-item"><div class="stat-num">48h</div><div class="stat-label">Délai de livraison</div></div>
+      <div class="stat-item"><div class="stat-num">3</div><div class="stat-label">Plateformes maîtrisées</div></div>
+      <div class="stat-item"><div class="stat-num">9:16</div><div class="stat-label">Format natif</div></div>
+      <div class="stat-item"><div class="stat-num">3s</div><div class="stat-label">Hook garanti</div></div>
+      </div>
+    </div>
+
+    <!-- TICKER -->
+    <div class="ticker-wrapper">
+      <div class="ticker-track">
+        <span class="ticker-item"><span class="ticker-dot"></span>Montage vidéo</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Reels · TikTok · Shorts</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Publicités vidéo</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Vlogs &amp; documentaires</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Teasers &amp; trailers</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Captions animées</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>DaVinci Resolve</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Photoshop</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Montage vidéo</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Reels · TikTok · Shorts</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Publicités vidéo</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Vlogs &amp; documentaires</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Teasers &amp; trailers</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Captions animées</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>DaVinci Resolve</span>
+        <span class="ticker-item"><span class="ticker-dot"></span>Photoshop</span>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO -->
+    <div id="projets" class="section-header">
+      <div class="section-tag">Projets</div>
+      <h2>Mes créations</h2>
+      <p>Des projets personnels et études de cas — conçus pour démontrer mon approche du montage UGC.</p>
+    </div>
+
+    <div class="portfolio-grid">
+      <!-- Vidéo horizontale -->
+      <!-- Vidéo horizontale -->
+      <div class="video-featured reveal">
+        <div class="video-wrap" id="wrap-horiz">
+            <div class="play-fallback" id="pf-horiz" onclick="manualPlay('horiz')"><div class="play-circle"><div class="play-triangle"></div></div></div>
+            <video id="vid-horiz" autoplay muted loop playsinline preload="auto" poster="videos/poster_horiz.jpg">
+              <source src="videos/vsl_horiz.mp4" type="video/mp4">
+            </video>
+            <button class="sound-btn" id="btn-horiz" onclick="toggleSoundNative('horiz')" title="Activer le son">
+              <svg viewBox="0 0 24 24" id="icon-horiz-off"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <svg viewBox="0 0 24 24" id="icon-horiz-on" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </button>
+          </div>
+      </div>
+
+      <!-- 3 vidéos verticales -->
+      <div class="videos-row">
+        <div class="video-card reveal reveal-delay-1">
+          <div class="video-wrap vert" id="wrap-v1">
+            <div class="play-fallback" id="pf-v1" onclick="manualPlay('v1')"><div class="play-circle"><div class="play-triangle"></div></div></div>
+            <video id="vid-v1" muted loop playsinline preload="metadata" poster="videos/poster_v1.jpg">
+              <source src="videos/ugc_v1.mp4" type="video/mp4">
+            </video>
+            <button class="sound-btn" id="btn-v1" onclick="toggleSoundNative('v1')" title="Activer le son">
+              <svg viewBox="0 0 24 24" id="icon-v1-off"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <svg viewBox="0 0 24 24" id="icon-v1-on" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="video-card reveal reveal-delay-2">
+          <div class="video-wrap vert" id="wrap-v2">
+            <div class="play-fallback" id="pf-v2" onclick="manualPlay('v2')"><div class="play-circle"><div class="play-triangle"></div></div></div>
+            <video id="vid-v2" muted loop playsinline preload="metadata" poster="videos/poster_v2.jpg">
+              <source src="videos/ugc_v2.mp4" type="video/mp4">
+            </video>
+            <button class="sound-btn" id="btn-v2" onclick="toggleSoundNative('v2')" title="Activer le son">
+              <svg viewBox="0 0 24 24" id="icon-v2-off"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <svg viewBox="0 0 24 24" id="icon-v2-on" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="video-card reveal reveal-delay-3">
+          <div class="video-wrap vert" id="wrap-v3">
+            <div class="play-fallback" id="pf-v3" onclick="manualPlay('v3')"><div class="play-circle"><div class="play-triangle"></div></div></div>
+            <video id="vid-v3" muted loop playsinline preload="metadata" poster="videos/poster_v3.jpg">
+              <source src="videos/ugc_v3.mp4" type="video/mp4">
+            </video>
+            <button class="sound-btn" id="btn-v3" onclick="toggleSoundNative('v3')" title="Activer le son">
+              <svg viewBox="0 0 24 24" id="icon-v3-off"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+              <svg viewBox="0 0 24 24" id="icon-v3-on" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div id="services" class="section-header">
+      <div class="section-tag">Services</div>
+      <h2>Ce que je propose</h2>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal reveal-delay-1">
+        <span class="service-icon">⚡</span>
+        <div class="service-title">Montage court-format</div>
+        <div class="service-desc">Reels, TikTok, Shorts — cuts dynamiques, hooks percutants et captions animées. Livré prêt à publier sur chaque plateforme.</div>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <span class="service-icon">🎬</span>
+        <div class="service-title">Publicités &amp; ads vidéo</div>
+        <div class="service-desc">Spots publicitaires courts ou longs, orientés conversion — call-to-action fort, rythme adapté au comportement de ta cible.</div>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <span class="service-icon">✍️</span>
+        <div class="service-title">Captions &amp; motion</div>
+        <div class="service-desc">Sous-titres animés, effets de texte et intégration de visuels Photoshop pour des contenus à l'identité forte.</div>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <span class="service-icon">🎵</span>
+        <div class="service-title">Long-format</div>
+        <div class="service-desc">Vlogs, interviews, documentaires, capsules YouTube — montage narratif soigné, étalonnage et habillage inclus.</div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div id="about" class="section-header">
+      <div class="section-tag">À propos</div>
+      <h2>Qui est PAG Studio&nbsp;?</h2>
+    </div>
+
+    <div class="about-section reveal">
+      <div class="about-text">
+        <h2>Monteur &amp; éditeur vidéo<br>freelance polyvalent</h2>
+        <p>PAG Studio, c'est une vision simple : donner à chaque contenu le montage qu'il mérite. Vidéo courte ou longue, pub ou vlog, social media ou YouTube — je m'adapte à ton format, ton audience et tes objectifs.</p>
+        <p>Je maîtrise DaVinci Resolve pour le montage et l'étalonnage, et Photoshop pour la création de visuels, thumbnails et habillages graphiques intégrés à la vidéo.</p>
+        <p>Disponible pour des missions ponctuelles ou récurrentes avec des créateurs, marques, agences ou entreprises — réactif, rigoureux, orienté résultat.</p>
+        <div class="tools-list">
+          <span class="tool-tag">DaVinci Resolve</span>
+          <span class="tool-tag">Photoshop</span>
+        </div>
+      </div>
+      <div class="about-visual">
+        <div class="about-stat-card"><div class="about-stat-num">48h</div><div class="about-stat-label">Délai de livraison</div></div>
+        <div class="about-stat-card"><div class="about-stat-num">100%</div><div class="about-stat-label">Orienté résultat</div></div>
+        <div class="about-stat-card"><div class="about-stat-num">2</div><div class="about-stat-label">Outils maîtrisés</div></div>
+        <div class="about-stat-card"><div class="about-stat-num">3s</div><div class="about-stat-label">Hook garanti</div></div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <section id="contact" class="contact-section">
+      <div class="contact-card reveal">
+        <h2>Travaillons ensemble</h2>
+        <p>Créateur, marque, agence ou entreprise — tu as un projet vidéo ? Réserve directement un créneau pour qu'on en parle.</p>
+
+        <!-- Calendly inline embed -->
+        <div class="calendly-wrap">
+          <iframe
+            src="https://calendly.com/pagstudio-contact/30min?embed_domain=pagstudio&embed_type=Inline&hide_gdpr_banner=1&background_color=0a0a0a&text_color=ffffff&primary_color=a855f7"
+            width="100%"
+            height="680"
+            frameborder="0"
+            scrolling="no"
+            style="border:none; border-radius:16px; overflow:hidden;">
+          </iframe>
+        </div>
+
+        <div class="contact-divider">ou retrouve-moi sur</div>
+        <div class="contact-links">
+          <a class="contact-link" href="https://calendly.com/pagstudio-contact/30min" target="_blank">📅 Prendre RDV</a>
+          <a class="contact-link" href="https://www.instagram.com/pagstudio.contact/?hl=fr" target="_blank">📷 Instagram</a>
+          <a class="contact-link" href="https://www.linkedin.com/in/florent-pagliari-6b4725405/" target="_blank">💼 LinkedIn</a>
+        </div>
+      </div>
+    </section>
+
+    </div><!-- /page-inner -->
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+      <p>© 2025 PAG Studio — Monteur &amp; éditeur vidéo freelance</p>
+      <div style="display:flex;gap:20px;align-items:center;">
+        <p>Disponible pour missions · France &amp; Remote</p>
+        <span style="color:rgba(255,255,255,0.15);">|</span>
+        <button onclick="document.getElementById('modal-legal').style.display='flex'" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">Mentions légales</button>
+        <button onclick="document.getElementById('modal-privacy').style.display='flex'" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:color 0.2s;" onmouseover="this.style.color='rgba(255,255,255,0.8)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">Politique de confidentialité</button>
+      </div>
+      </div>
+    </footer>
+
+    <!-- ── MODAL MENTIONS LÉGALES ── -->
+    <div id="modal-legal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);" onclick="if(event.target===this)this.style.display='none'">
+      <div style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.1);border-radius:20px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;padding:48px;position:relative;">
+        <button onclick="document.getElementById('modal-legal').style.display='none'" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;">✕</button>
+        <h2 style="font-size:24px;font-weight:900;letter-spacing:-0.5px;margin-bottom:32px;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Mentions légales</h2>
+
+        <div style="font-size:14px;color:rgba(255,255,255,0.75);line-height:1.8;display:flex;flex-direction:column;gap:24px;">
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Éditeur du site</h3>
+            <p>Le présent site est édité par :</p>
+            <p><strong style="color:#fff;">Florent Pagliari</strong><br>
+            Auto-entrepreneur — PAG Studio<br>
+            56220 Saint-Jacut-les-Pins, France<br>
+            SIRET : <span style="color:#a855f7;">[À COMPLÉTER]</span><br>
+            Email : <a href="mailto:pagstudio.contact@gmail.com" style="color:#c084fc;text-decoration:none;">pagstudio.contact@gmail.com</a></p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Hébergement</h3>
+            <p>Hébergeur : <span style="color:#a855f7;">[À COMPLÉTER — ex : Netlify, Inc. — 512 2nd Street, Suite 200, San Francisco, CA 94107, USA]</span></p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Propriété intellectuelle</h3>
+            <p>L'ensemble des contenus présents sur ce site (textes, images, vidéos, graphismes, logos) sont la propriété exclusive de Florent Pagliari — PAG Studio, sauf mentions contraires. Toute reproduction, distribution ou utilisation sans autorisation préalable est strictement interdite.</p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Responsabilité</h3>
+            <p>PAG Studio s'efforce de maintenir les informations publiées sur ce site à jour et exactes. Toutefois, la responsabilité du site ne saurait être engagée en cas d'erreur, d'omission ou d'indisponibilité du service.</p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Droit applicable</h3>
+            <p>Le présent site est soumis au droit français. Tout litige relatif à son utilisation relève de la compétence exclusive des tribunaux français.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODAL POLITIQUE DE CONFIDENTIALITÉ ── -->
+    <div id="modal-privacy" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);" onclick="if(event.target===this)this.style.display='none'">
+      <div style="background:#0d0d0d;border:1px solid rgba(255,255,255,0.1);border-radius:20px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;padding:48px;position:relative;">
+        <button onclick="document.getElementById('modal-privacy').style.display='none'" style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;">✕</button>
+        <h2 style="font-size:24px;font-weight:900;letter-spacing:-0.5px;margin-bottom:32px;background:linear-gradient(135deg,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Politique de confidentialité</h2>
+
+        <div style="font-size:14px;color:rgba(255,255,255,0.75);line-height:1.8;display:flex;flex-direction:column;gap:24px;">
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Responsable du traitement</h3>
+            <p><strong style="color:#fff;">Florent Pagliari — PAG Studio</strong><br>
+            56220 Saint-Jacut-les-Pins, France<br>
+            Email : <a href="mailto:pagstudio.contact@gmail.com" style="color:#c084fc;text-decoration:none;">pagstudio.contact@gmail.com</a></p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Données collectées</h3>
+            <p>Ce site ne collecte aucune donnée personnelle de manière automatique. Les seules données susceptibles d'être traitées sont celles que vous transmettez volontairement via la prise de rendez-vous Calendly ou via les liens de contact (email, Instagram, LinkedIn).</p>
+            <p>Ces données sont limitées à : nom, prénom, adresse email et tout message que vous choisissez de communiquer.</p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Finalité du traitement</h3>
+            <p>Les données collectées sont utilisées uniquement dans le but de répondre à vos demandes de contact ou de prises de rendez-vous. Elles ne sont ni vendues, ni partagées avec des tiers.</p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Cookies et traceurs</h3>
+            <p>Ce site n'utilise pas de cookies de suivi ou publicitaires. Des cookies techniques tiers peuvent être déposés par les services intégrés (Calendly, YouTube) conformément à leurs propres politiques de confidentialité.</p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Vos droits</h3>
+            <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et d'opposition au traitement de vos données. Pour exercer ces droits, contactez-nous à : <a href="mailto:pagstudio.contact@gmail.com" style="color:#c084fc;text-decoration:none;">pagstudio.contact@gmail.com</a></p>
+          </div>
+
+          <div>
+            <h3 style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#c084fc;margin-bottom:8px;">Services tiers</h3>
+            <p>Ce site intègre des services tiers (Calendly, YouTube) disposant de leurs propres politiques de confidentialité. Nous vous invitons à les consulter directement sur leurs sites respectifs.</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <script>
+
+    // ── Autoplay avec fallback bouton play ──
+    function tryPlay(video) {
+      video.muted = true;
+      var id = video.id.replace('vid-', '');
+      var pf = document.getElementById('pf-' + id);
+      var promise = video.play();
+      if (promise !== undefined) {
+        promise.then(function() {
+          // Autoplay réussi — cacher le bouton play
+          if (pf) pf.classList.remove('show');
+        }).catch(function() {
+          // Autoplay bloqué — afficher le bouton play
+          if (pf) pf.classList.add('show');
+        });
+      }
+    }
+
+    function manualPlay(id) {
+      var video = document.getElementById('vid-' + id);
+      var pf = document.getElementById('pf-' + id);
+      if (!video) return;
+      video.muted = true;
+      video.play().then(function() {
+        if (pf) pf.classList.remove('show');
+      }).catch(function(){});
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Observer chaque vidéo — play quand visible, pause quand hors écran
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          var v = entry.target;
+          if (entry.isIntersecting) {
+            tryPlay(v);
+          } else {
+            v.pause();
+          }
+        });
+      }, { threshold: 0.2 });
+
+      document.querySelectorAll('video').forEach(function(v) {
+        observer.observe(v);
+      });
+
+      // Fallback — au premier clic n'importe où sur la page, relancer toutes les vidéos visibles
+      var kicked = false;
+      function kickAll() {
+        if (kicked) return;
+        kicked = true;
+        document.querySelectorAll('video').forEach(function(v) {
+          var rect = v.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            tryPlay(v);
+          }
+        });
+      }
+      document.addEventListener('click', kickAll, { once: true });
+      document.addEventListener('scroll', kickAll, { once: true, passive: true });
+      document.addEventListener('touchstart', kickAll, { once: true, passive: true });
+    });
+
+    // ── Toggle son vidéos natives ──
+    function toggleSoundNative(id) {
+      var video = document.getElementById('vid-' + id);
+      if (!video) return;
+      video.muted = !video.muted;
+      var iconOff = document.getElementById('icon-' + id + '-off');
+      var iconOn  = document.getElementById('icon-' + id + '-on');
+      if (iconOff && iconOn) {
+        iconOff.style.display = video.muted ? 'block' : 'none';
+        iconOn.style.display  = video.muted ? 'none'  : 'block';
+      }
+    }
+
+    // ── Particules améliorées ──
+    const pc = document.getElementById('particles');
+    const cols = ['#a855f7','#ec4899','#6366f1','#f97316','#c084fc'];
+    for (let i = 0; i < 35; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const s = Math.random() * 2 + 0.8;
+      const drift = (Math.random() - 0.5) * 80;
+      p.style.cssText = `left:${Math.random()*100}%;bottom:-5%;width:${s}px;height:${s}px;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${Math.random()*20+15}s;animation-delay:${Math.random()*15}s;--drift:${drift}px;`;
+      pc.appendChild(p);
+    }
+
+    // ── Scroll reveal (IntersectionObserver) ──
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => observer.observe(el));
+
+    // ── Parallax doux sur les orbes au scroll ──
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          const orbs = document.querySelectorAll('.orb');
+          const speeds = [0.03, -0.025, 0.02, -0.015];
+          orbs.forEach((orb, i) => {
+            const s = speeds[i] || 0.02;
+            orb.style.transform = `translateY(${y * s}px)`;
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // ── Cursor glow sur le hero ──
+    const hero = document.querySelector('.hero');
+    if (hero) {
+      const glow = document.createElement('div');
+      glow.style.cssText = 'position:absolute;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(168,85,247,0.08) 0%,transparent 70%);pointer-events:none;z-index:0;transition:transform 0.6s cubic-bezier(0.16,1,0.3,1),opacity 0.4s;opacity:0;';
+      hero.style.position = 'relative';
+      hero.style.overflow = 'hidden';
+      hero.appendChild(glow);
+      hero.addEventListener('mousemove', (e) => {
+        const r = hero.getBoundingClientRect();
+        glow.style.opacity = '1';
+        glow.style.transform = `translate(${e.clientX - r.left - 175}px, ${e.clientY - r.top - 175}px)`;
+      });
+      hero.addEventListener('mouseleave', () => { glow.style.opacity = '0'; });
+    }
+  </script>
+</body>
+</html>
